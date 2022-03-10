@@ -1,0 +1,7 @@
+/datasets/*
+!/datasets/.gitkeep
+
+/runs/**/result_images/
+
+/src/__pycache__/
+/src_vae_cyclegan/
