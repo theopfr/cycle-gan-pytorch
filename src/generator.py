@@ -6,15 +6,15 @@ import torch.nn.functional as F
 
 class ConvBlock(nn.Module):
     def __init__(self, 
-                in_channels: int, 
-                out_channels: int, 
-                kernel_size: int, 
-                stride: int=1, 
-                padding: int=0, 
-                use_activation: bool=True, 
-                use_norm: bool=True, 
-                upsample: bool=False
-                ) -> None:
+        in_channels: int, 
+        out_channels: int, 
+        kernel_size: int, 
+        stride: int=1, 
+        padding: int=0, 
+        use_activation: bool=True, 
+        use_norm: bool=True, 
+        upsample: bool=False
+    ) -> None:
 
         super(ConvBlock, self).__init__()
 

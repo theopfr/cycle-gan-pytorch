@@ -18,7 +18,23 @@ torch.manual_seed(0)
 
 
 class TrainSetup:
-    def __init__(self, run_name: str, dataset_path: str, image_size: int, epochs: int, batch_size: int, num_res_blocks: int, lr: float, gaussian_noise_rate: float, lambda_adversarial: int, lambda_cycle: float, resume: bool=False) -> None:
+    def __init__(
+        self, 
+        run_name: str, 
+        dataset_path: str, 
+        image_size: int, 
+        epochs: int,
+        batch_size: int, 
+        num_res_blocks: int, 
+        lr: float,
+        lr_decay: List[float],
+        gaussian_noise_rate: float, 
+        lambda_adversarial: int, 
+        lambda_cycle: int,
+        lambda_identity: int,
+        resume: bool=False
+    ) -> None:
+
         self.run_name = run_name
         self.dataset_path = dataset_path
         self.image_size = image_size
@@ -26,12 +42,15 @@ class TrainSetup:
         self.batch_size = batch_size
         self.num_res_blocks = num_res_blocks
         self.lr = lr
+        self.lr_decay_rate = lr_decay[0]
+        self.lr_decay_intervall = lr_decay[1]
         self.gaussian_noise_rate = gaussian_noise_rate
         self.lambda_adversarial = lambda_adversarial
         self.lambda_cycle = lambda_cycle
+        self.lambda_identity = lambda_identity
 
-        self.generator_a = Generator(num_res_blocks=1).to(device)
-        self.generator_b = Generator(num_res_blocks=1).to(device)
+        self.generator_a = Generator(num_res_blocks=self.num_res_blocks).to(device)
+        self.generator_b = Generator(num_res_blocks=self.num_res_blocks).to(device)
         self.discriminator_a = Discriminator(gaussian_noise_rate=self.gaussian_noise_rate).to(device)
         self.discriminator_b = Discriminator(gaussian_noise_rate=self.gaussian_noise_rate).to(device)
 
@@ -61,9 +80,9 @@ class TrainSetup:
             for idx, (image_a, image_b) in enumerate(tqdm(self.dataset, desc="epoch")):
                 iteration += 1
 
-                lr_scheduler(self.optimizer_generator, iteration, 0, self.lr, 0.97, 175)
-                lr_scheduler(self.optimizer_discriminator_a, iteration, 0, self.lr, 0.97, 175)
-                lr_scheduler(self.optimizer_discriminator_b, iteration, 0, self.lr, 0.97, 175)
+                lr_scheduler(self.optimizer_generator, iteration, 0, self.lr, self.lr_decay_rate, self.lr_decay_intervall)
+                lr_scheduler(self.optimizer_discriminator_a, iteration, 0, self.lr, self.lr_decay_rate, self.lr_decay_intervall)
+                lr_scheduler(self.optimizer_discriminator_b, iteration, 0, self.lr, self.lr_decay_rate, self.lr_decay_intervall)
 
                 image_a = image_a.to(device)
                 image_b = image_b.to(device)
@@ -79,9 +98,9 @@ class TrainSetup:
                 disc_a_fake_loss = self.MSE_Loss(prediction_disc_a_fake, torch.zeros_like(prediction_disc_a_fake))
                 disc_a_loss = disc_a_real_loss + disc_a_fake_loss
 
-                self.optimizer_discriminator_a.zero_grad()
-                disc_a_loss.backward()
-                self.optimizer_discriminator_a.step()
+                # self.optimizer_discriminator_a.zero_grad()
+                # disc_a_loss.backward()
+                # self.optimizer_discriminator_a.step()
 
                 # generate fake B face
                 fake_image_b = self.generator_b(image_a)
@@ -94,11 +113,11 @@ class TrainSetup:
                 disc_b_fake_loss = self.MSE_Loss(prediction_disc_b_fake, torch.zeros_like(prediction_disc_b_fake))
                 disc_b_loss = disc_b_real_loss + disc_b_fake_loss
 
-                #disc_loss = (disc_a_loss + disc_b_loss) / 2
+                disc_loss = (disc_a_loss + disc_b_loss) / 2
 
                 # backpropagate discriminator
                 self.optimizer_discriminator_b.zero_grad()
-                disc_b_loss.backward()
+                disc_loss.backward()
                 self.optimizer_discriminator_b.step()
 
                 ### generators ###
@@ -124,9 +143,9 @@ class TrainSetup:
                 identity_loss_b = self.L1_loss(image_b, identity_image_b)
 
                 gen_loss = ( 
-                    (gen_a_loss * self.lambda_adversarial) + (gen_b_loss * self.lambda_adversarial) + 
-                    (cycle_loss_a * self.lambda_cycle) + (cycle_loss_b * self.lambda_cycle) +
-                    identity_loss_a + identity_loss_b
+                    gen_a_loss * self.lambda_adversarial + gen_b_loss * self.lambda_adversarial +
+                    cycle_loss_a * self.lambda_cycle + cycle_loss_b * self.lambda_cycle +
+                    identity_loss_a * self.lambda_identity + identity_loss_b * self.lambda_identity
                 )
 
                 self.optimizer_generator.zero_grad()
@@ -144,19 +163,21 @@ class TrainSetup:
             save_checkpoint(self.discriminator_a, self.optimizer_discriminator_a, self.run_folder + "models/discrimnator_model_a.pt")
             save_checkpoint(self.discriminator_b, self.optimizer_discriminator_b, self.run_folder + "models/discrimnator_model_b.pt")
 
-            
+
 trainSetup = TrainSetup(
     run_name="horse-to-zebra-1",
     dataset_path="../datasets/horse_zebra/",
-    image_size=200,
+    image_size=256,
     epochs=200,
     batch_size=1,
-    num_res_blocks=7,
-    lr=6.255007261813624e-05,
-    gaussian_noise_rate=0.075,
+    num_res_blocks=9,
+    lr=0.0002,
+    lr_decay=[1, 200],
+    gaussian_noise_rate=0.05,
     lambda_adversarial=1,
-    lambda_cycle=10,
-    resume=True
+    lambda_cycle=5,
+    lambda_identity=1,
+    resume=False
 )
 
 trainSetup.train()
