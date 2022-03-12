@@ -55,9 +55,9 @@ class TrainSetup:
         self.discriminator_b = Discriminator(gaussian_noise_rate=self.gaussian_noise_rate).to(device)
 
         self.optimizer_generator = torch.optim.Adam(list(self.generator_a.parameters()) + list(self.generator_b.parameters()), lr=self.lr, betas=(0.5, 0.999))
-        # self.optimizer_discriminator = torch.optim.Adam(list(self.discriminator_a.parameters()) + list(self.discriminator_b.parameters()), lr=self.lr, betas=(0.5, 0.999))
-        self.optimizer_discriminator_a = torch.optim.Adam(self.discriminator_a.parameters(), lr=self.lr, betas=(0.5, 0.999))
-        self.optimizer_discriminator_b = torch.optim.Adam(self.discriminator_b.parameters(), lr=self.lr, betas=(0.5, 0.999))
+        self.optimizer_discriminator = torch.optim.Adam(list(self.discriminator_a.parameters()) + list(self.discriminator_b.parameters()), lr=self.lr, betas=(0.5, 0.999))
+        #self.optimizer_discriminator_a = torch.optim.Adam(self.discriminator_a.parameters(), lr=self.lr, betas=(0.5, 0.999))
+        #self.optimizer_discriminator_b = torch.optim.Adam(self.discriminator_b.parameters(), lr=self.lr, betas=(0.5, 0.999))
 
         self.L1_loss = nn.L1Loss()
         self.MSE_Loss = nn.MSELoss()
@@ -67,8 +67,8 @@ class TrainSetup:
         if resume:
             load_checkpoint(self.generator_a, self.optimizer_generator, self.lr, self.run_folder + "models/generator_model_a.pt", device)
             load_checkpoint(self.generator_b, self.optimizer_generator, self.lr, self.run_folder + "models/generator_model_b.pt", device,)
-            load_checkpoint(self.discriminator_a, self.optimizer_discriminator_a, self.lr, self.run_folder + "models/discrimnator_model_a.pt", device)
-            load_checkpoint(self.discriminator_b, self.optimizer_discriminator_b, self.lr, self.run_folder + "models/discrimnator_model_b.pt", device)
+            load_checkpoint(self.discriminator_a, self.optimizer_discriminator, self.lr, self.run_folder + "models/discrimnator_model_a.pt", device)
+            load_checkpoint(self.discriminator_b, self.optimizer_discriminator, self.lr, self.run_folder + "models/discrimnator_model_b.pt", device)
         else:
             initialize_run(run_path=self.run_folder)
 
@@ -81,8 +81,8 @@ class TrainSetup:
                 iteration += 1
 
                 lr_scheduler(self.optimizer_generator, iteration, 0, self.lr, self.lr_decay_rate, self.lr_decay_intervall)
-                lr_scheduler(self.optimizer_discriminator_a, iteration, 0, self.lr, self.lr_decay_rate, self.lr_decay_intervall)
-                lr_scheduler(self.optimizer_discriminator_b, iteration, 0, self.lr, self.lr_decay_rate, self.lr_decay_intervall)
+                lr_scheduler(self.optimizer_discriminator, iteration, 0, self.lr, self.lr_decay_rate, self.lr_decay_intervall)
+                #lr_scheduler(self.optimizer_discriminator_b, iteration, 0, self.lr, self.lr_decay_rate, self.lr_decay_intervall)
 
                 image_a = image_a.to(device)
                 image_b = image_b.to(device)
@@ -116,9 +116,9 @@ class TrainSetup:
                 disc_loss = (disc_a_loss + disc_b_loss) / 2
 
                 # backpropagate discriminator
-                self.optimizer_discriminator_b.zero_grad()
+                self.optimizer_discriminator.zero_grad()
                 disc_loss.backward()
-                self.optimizer_discriminator_b.step()
+                self.optimizer_discriminator.step()
 
                 ### generators ###
 
@@ -160,8 +160,8 @@ class TrainSetup:
 
             save_checkpoint(self.generator_a, self.optimizer_generator, self.run_folder + "models/generator_model_a.pt")
             save_checkpoint(self.generator_b, self.optimizer_generator, self.run_folder + "models/generator_model_b.pt")
-            save_checkpoint(self.discriminator_a, self.optimizer_discriminator_a, self.run_folder + "models/discrimnator_model_a.pt")
-            save_checkpoint(self.discriminator_b, self.optimizer_discriminator_b, self.run_folder + "models/discrimnator_model_b.pt")
+            save_checkpoint(self.discriminator_a, self.optimizer_discriminator, self.run_folder + "models/discrimnator_model_a.pt")
+            save_checkpoint(self.discriminator_b, self.optimizer_discriminator, self.run_folder + "models/discrimnator_model_b.pt")
 
 
 trainSetup = TrainSetup(
