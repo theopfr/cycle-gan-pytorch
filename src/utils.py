@@ -3,7 +3,7 @@ import torch
 import os
 import numpy as np
 import shutil
-
+import json
 from cycleGanDataset import cycleGanDataset
 
 
@@ -25,13 +25,22 @@ def create_dataloader(dataset_path: str, image_size: int=128, batch_size: int=12
     return dataloader
 
 
-def initialize_run(run_path: str) -> None:
-    if os.path.exists(run_path):
-        shutil.rmtree(run_path)
+def initialize_run(run_folder: str) -> None:
+    if os.path.exists(run_folder):
+        shutil.rmtree(run_folder)
 
-    os.mkdir(run_path)
-    os.mkdir(run_path + "/models")
-    os.mkdir(run_path + "/result_images")
+    os.mkdir(run_folder)
+    os.mkdir(run_folder + "/models")
+    os.mkdir(run_folder + "/result_images")
+
+    initial_train_history = {
+        "disc_loss": [],
+        "gen_loss": [],
+        "lr": []
+    }
+
+    with open(run_folder + "/train_history.json", "w") as f:
+        json.dump(initial_train_history, f, indent=4)
 
 
 def save_checkpoint(model, optimizer, model_path: str) -> None:
@@ -48,6 +57,20 @@ def load_checkpoint(model, optimizer, lr: float, model_path: str, device) -> Non
 
     for param_group in optimizer.param_groups:
         param_group["lr"] = lr
+
+
+def save_train_history(run_name: str, disc_loss: float, gen_loss: float, lr: float) -> None:
+    run_folder = f"../runs/{run_name}/train_history.json"
+
+    with open(run_folder, "r") as f:
+        train_history = json.load(f)
+    
+    train_history["disc_loss"].append(disc_loss)
+    train_history["gen_loss"].append(gen_loss)
+    train_history["lr"].append(lr)
+
+    with open(run_folder, "w") as f:
+        json.dump(train_history, f, indent=4)
 
 
 def lr_scheduler(optimizer: torch.optim, current_iteration: int=0, warmup_iterations: int=0, lr_end: float=0.001, decay_rate: float=0.99, decay_intervall: int=100) -> None:

@@ -76,7 +76,7 @@ class TrainSetup:
 
     def train(self) -> None:
         iteration = 0
-        for epoch in range(self.epochs):
+        for epoch in range(36, self.epochs):
             for idx, (image_a, image_b) in enumerate(tqdm(self.dataset, desc="epoch")):
                 iteration += 1
 
@@ -122,8 +122,8 @@ class TrainSetup:
 
                 ### generators ###
 
-                prediction_disc_a_fake = self.discriminator_a(fake_image_a.detach())
-                prediction_disc_b_fake = self.discriminator_b(fake_image_b.detach())
+                prediction_disc_a_fake = self.discriminator_a(fake_image_a)
+                prediction_disc_b_fake = self.discriminator_b(fake_image_b)
 
                 # adversarial loss
                 gen_a_loss = self.MSE_Loss(prediction_disc_a_fake, torch.ones_like(prediction_disc_a_fake))
@@ -152,11 +152,11 @@ class TrainSetup:
                 gen_loss.backward()
                 self.optimizer_generator.step()
                 
-                if iteration % 100 == 0:
+                if iteration % 25 == 0:
                     save_image(torch.concat((image_b * 0.5 + 0.5, fake_image_a * 0.5 + 0.5), dim=0), self.run_folder + f"result_images/{epoch}_fake_image_a.png")
                     save_image(torch.concat((image_a * 0.5 + 0.5, fake_image_b * 0.5 + 0.5), dim=0), self.run_folder + f"result_images/{epoch}_fake_image_b.png")
                     
-            print(f"epoch: {epoch + 1} / {self.epochs}  -  iteration: {iteration}  -  disc_loss: {(disc_a_loss + disc_b_loss) / 2}  -  gen_loss: {gen_loss}\n  -  lr: {self.optimizer_generator.param_groups[0]['lr']}")
+            print(f"epoch: {epoch + 1} / {self.epochs}  -  iteration: {iteration}  -  disc_loss: {disc_loss}  -  gen_loss: {gen_loss}\n  -  lr: {self.optimizer_generator.param_groups[0]['lr']}")
 
             save_checkpoint(self.generator_a, self.optimizer_generator, self.run_folder + "models/generator_model_a.pt")
             save_checkpoint(self.generator_b, self.optimizer_generator, self.run_folder + "models/generator_model_b.pt")
@@ -171,13 +171,13 @@ trainSetup = TrainSetup(
     epochs=200,
     batch_size=1,
     num_res_blocks=9,
-    lr=0.0002,
+    lr=0.00015,
     lr_decay=[1, 200],
     gaussian_noise_rate=0.05,
     lambda_adversarial=1,
-    lambda_cycle=5,
+    lambda_cycle=10,
     lambda_identity=1,
-    resume=False
+    resume=True
 )
 
 trainSetup.train()

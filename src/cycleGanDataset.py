@@ -8,6 +8,7 @@ import numpy as np
 from typing import List
 from PIL import Image
 import os
+import random
 
 
 class cycleGanDataset(torch.utils.data.Dataset):
@@ -21,18 +22,17 @@ class cycleGanDataset(torch.utils.data.Dataset):
         np.random.shuffle(self.images_a)
         np.random.shuffle(self.images_b)
 
-    def __getitem__(self, idx: int) -> torch.Tensor:
-        np.random.shuffle(self.images_a)
-        np.random.shuffle(self.images_b)
-        
-        image_a = np.array(Image.open(f"../datasets/{self.dataset_path}/trainA/" + self.images_a[idx]).convert("RGB"))
-        image_b = np.array(Image.open(f"../datasets/{self.dataset_path}/trainB/" + self.images_b[idx]).convert("RGB"))
+    def __getitem__(self, _: int) -> torch.Tensor:
+        idx_a = random.randint(0, len(self.images_a) - 1)
+        idx_b = random.randint(0, len(self.images_b) - 1)
+
+        image_a = np.array(Image.open(f"../datasets/{self.dataset_path}/trainA/" + self.images_a[idx_a]).convert("RGB"))
+        image_b = np.array(Image.open(f"../datasets/{self.dataset_path}/trainB/" + self.images_b[idx_b]).convert("RGB"))
 
         transform = transforms.Compose([
             transforms.ToTensor(),
             transforms.RandomHorizontalFlip(p=0.5),
-            transforms.RandomCrop(size=self.image_size),
-            #transforms.Resize(self.image_size),
+            transforms.Resize(size=self.image_size),
             transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])
         ])
         
