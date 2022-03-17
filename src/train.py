@@ -9,7 +9,7 @@ import torch.utils.data
 import torch.nn as nn
 from torchvision.utils import save_image
 
-from utils import create_dataloader, device, initialize_run, save_checkpoint, load_checkpoint, lr_scheduler, save_train_history
+from utils import create_dataloader, device, initialize_run, save_checkpoint, load_checkpoint, lr_scheduler, save_train_history, get_config_args
 from generator import Generator
 from discriminator import Discriminator
 
@@ -18,7 +18,7 @@ torch.manual_seed(0)
 
 def train(config: dict) -> None:
     run_name = config["run_name"]
-    dataset_path = f"../datasets/{config['dataset_name']}"
+    dataset_name = config['dataset_name']
     resume = config["resume"]
     save_image_intervall = config["save_image_intervall"]
 
@@ -39,7 +39,7 @@ def train(config: dict) -> None:
     run_folder = f"../runs/{run_name}/"
 
     # create dataset
-    dataset = create_dataloader(dataset_path, image_size=image_size, batch_size=batch_size)
+    dataset = create_dataloader(dataset_name, image_size=image_size, batch_size=batch_size)
 
     # models
     generator_a = Generator(num_res_blocks=num_res_blocks).to(device)
@@ -147,8 +147,8 @@ def train(config: dict) -> None:
             
             # save generated images
             if iteration % save_image_intervall == 0:
-                save_image(torch.concat((image_b * 0.5 + 0.5, fake_image_a * 0.5 + 0.5), dim=0), run_folder + f"result_images/{epoch}_fake_image_a.png")
-                save_image(torch.concat((image_a * 0.5 + 0.5, fake_image_b * 0.5 + 0.5), dim=0), run_folder + f"result_images/{epoch}_fake_image_b.png")
+                save_image(torch.concat((image_b * 0.5 + 0.5, fake_image_a * 0.5 + 0.5), dim=0), run_folder + f"result_images/{epoch}_{iteration}_fake_image_a.png")
+                save_image(torch.concat((image_a * 0.5 + 0.5, fake_image_b * 0.5 + 0.5), dim=0), run_folder + f"result_images/{epoch}_{iteration}_fake_image_b.png")
 
         # save train history and model checkpoints
         save_train_history(run_name, float(disc_loss.cpu().detach()), float(gen_loss.cpu().detach()), optimizer_generator.param_groups[0]["lr"])
@@ -162,23 +162,25 @@ def train(config: dict) -> None:
 
 
 if __name__ == "__main__":
+
+    args = get_config_args()
+
     config = {
-        "run_name": "horse-to-zebra",
-        "dataset_name": "horse_zebra",
-        "save_image_intervall": 50,
-        "resume": True,
-        
-        "epochs": 200,
-        "image_size": 256,
-        "batch_size": 1,
-        "num_res_blocks": 9,
-        "lr": 0.0002,
-        "lr_decay_rate": 1,
-        "lr_decay_intervall": 200,
-        "gaussian_noise_rate": 0.05,
-        "lambda_adversarial": 1,
-        "lambda_cycle": 10,
-        "lambda_identity": 10
+        "run_name": args["run_name"],
+        "dataset_name": args["dataset_name"],
+        "save_image_intervall": 50 or args["save_image_intervall"],
+        "resume": False or (eval(args["resume"]) if args["resume"] != None else None),
+        "epochs": 200 or args["epochs"],
+        "image_size": 256 or args["image_size"],
+        "batch_size": 1 or args["batch_size"],
+        "num_res_blocks": 9 or args["num_res_blocks"],
+        "lr": 0.0002 or args["lr"],
+        "lr_decay_rate": 1 or args["lr_decay_rate"],
+        "lr_decay_intervall": 200 or args["lr_decay_intervall"],
+        "gaussian_noise_rate": 0.05 or args["gaussian_noise_rate"],
+        "lambda_adversarial": 1 or args["lambda_adversarial"],
+        "lambda_cycle": 10 or args["lambda_cycle"],
+        "lambda_identity": 1 or args["lambda_identity"]
     }
 
     train(config)

@@ -5,6 +5,7 @@ import numpy as np
 import shutil
 import json
 from cycleGanDataset import cycleGanDataset
+import argparse
 
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -86,4 +87,28 @@ def lr_scheduler(optimizer: torch.optim, current_iteration: int=0, warmup_iterat
         for param_group in optimizer.param_groups:
             param_group["lr"] = current_lr * decay_rate
         # print("lr decay:", optimizer.param_groups[0]["lr"])
+
+
+def get_config_args() -> dict:
+    parser = argparse.ArgumentParser(description="Arguments and hyperparameters for training the Cycle-GAN model.")
+
+    parser.add_argument("--run_name", type=str, required=True, help="")
+    parser.add_argument("--dataset_name", type=str, required=True, help="")
+    parser.add_argument("--save_image_intervall", type=int, required=False, help="")
+    parser.add_argument("--resume", type=str, required=False, help="")
+    parser.add_argument("--epochs", type=int, required=False, help="")
+    parser.add_argument("--image_size", type=int, required=False, help="")
+    parser.add_argument("--batch_size", type=int, required=False, help="")
+    parser.add_argument("--num_res_blocks", type=int, required=False, help="")
+    parser.add_argument("--lr", type=float, required=False, help="")
+    parser.add_argument("--lr_decay_rate", type=float, required=False, help="")
+    parser.add_argument("--lr_decay_intervall", type=float, required=False, help="")
+    parser.add_argument("--gaussian_noise_rate", type=float, required=False, help="")
+    parser.add_argument("--lambda_adversarial", type=int, required=False, help="")
+    parser.add_argument("--lambda_cycle", type=int, required=False, help="")
+    parser.add_argument("--lambda_identity", type=int, required=False, help="")
+
+    args = vars(parser.parse_args())
+
+    return args
 

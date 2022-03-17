@@ -13,7 +13,11 @@ Requirements: Python >= 3.7, Pytorch, torchvision, tqdm, numpy
 pip install -r requirements.txt
 ```
 
+<br/>
+
 ---
+
+<br/>
 
 ## | train:
 
@@ -21,17 +25,10 @@ pip install -r requirements.txt
 - create a folder inside ``datasets/`` with a descriptive name
 - create two sub-folders ``trainA`` and ``trainB``
 - put all the images of one of the two image categories in one of the folders (e.g put all the images of horses in ``trainA`` and all the images of zebras in ``trainB``)
-- example:
-    ```
-    datasets/
-    |____<your-dataset>/
-        |____trainA/
-        |    . . .
-        |____trainB/
-            . . .
-    ```
   
 ##### You can find datasets [here](https://people.eecs.berkeley.edu/~taesung_park/CycleGAN/datasets/).
+
+<br/>
 
 ### 2. run the train script:
 - navigate to ``src/``
@@ -41,14 +38,18 @@ pip install -r requirements.txt
     python .\train.py --run_name "horse-zebra-run" --dataset_name "horse-zebra-dataset" --save_image_intervall 5 --resume False --epochs 100 --image_size 256 --batch_size 1 --num_res_blocks 9 --lr 0.0002 --lr_decay_rate 1 --lr_decay_intervall 200 --gaussian_noise_rate 0.05 --lambda_adversarial 1 --lambda_cycle 10 --lambda_identity 1 
     ```
 
+<br/>
+
 ---
+
+<br/>
 
 ## | train arguments and hyperparamters:
 | argument | type | default | description | 
 | :------------- |:-------------:| ----- | ----- |
 | ``run_name`` | str | - | Name for the train run (a folder with this name will be created to store train metrics, model checkpoints and generated images). | 
 | ``dataset_name`` | str | - | Name of the folder which holds the dataset to train on. | 
-| ``resume`` | str | "False" | Options: "True", "False". Specifies if the train run should be continued if it was previously interrupted (if set to "False", the run-folder will be reinitialized). | 
+| ``resume`` | str | False | Options: "True", "False". Specifies if the train run should be continued if it was previously interrupted (if set to "False", the run-folder will be reinitialized). | 
 | ``save_image_intervall`` | int | 50 | Specifies after how many epochs generated images should be saved to the run-folder. | 
 | ``epochs`` | int | 100 | The amount of epochs to train. | 
 | ``image_size`` | int | 256 | The image size to which all images with be resized (will be quadratic)). | 
@@ -65,3 +66,19 @@ pip install -r requirements.txt
 ##### All the default values are chosen as in the original paper to train on the horse-zebra dataset.
 
 ---
+
+<!--
+```
+    datasets/
+    |
+    |____horse-zebra/
+        |
+        |____trainA/
+        |    |____horse_img1.png
+        |    |____. . .
+        |
+        |____trainB/
+             |____zebra_img1.png
+             |____. . .
+    ```
+-->
