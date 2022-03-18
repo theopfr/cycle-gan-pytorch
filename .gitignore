@@ -2,6 +2,6 @@
 !/datasets/.gitkeep
 
 /runs/*
+!/runs/.gitkeep
 
 /src/__pycache__/
-/src_vae_cyclegan/

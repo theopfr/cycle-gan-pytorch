@@ -1,7 +1,7 @@
 # Cycle-GAN implemented in PyTorch
 
 
-## This repository contains an implementation of the Cylce-GAN architecture as proposed in the [original paper](https://arxiv.org/abs/1703.10593) along with instructions to train on an own dataset.
+### This repository contains an implementation of the Cylce-GAN architecture as proposed in the [original paper](https://arxiv.org/abs/1703.10593) along with instructions to train on an own dataset.
 
 ---
 
@@ -13,7 +13,7 @@ cd cycle-gan-pytorch
 ```
 
 ### 2. install requirements:
-Requirements: Python>=3.7, Pytorch, torchvision, tqdm, numpy
+Requirements: ``Python>=3.7``, ``Pytorch``, ``torchvision``, ``tqdm``, ``numpy``
 ```
 pip install -r requirements.txt
 ```
@@ -33,7 +33,7 @@ pip install -r requirements.txt
 - run the ``train.py`` script by specifying the train arguments and hyperparameters with command line flags (find the train arguments in the table below; the ``run_name`` and ``dataset_name`` flag have to be set)
 - example:
     ```
-    python .\train.py --run_name "horse-zebra-run" --dataset_name "horse-zebra-dataset" --save_image_intervall 5 --resume False --epochs 100 --image_size 256 --batch_size 1 --num_res_blocks 9 --lr 0.0002 --lr_decay_rate 1 --lr_decay_intervall 200 --gaussian_noise_rate 0.05 --lambda_adversarial 1 --lambda_cycle 10 --lambda_identity 1 
+    python .\train.py --run_name "horse-zebra-run" --dataset_name "horse-zebra-dataset" --save_image_intervall 50 --resume False --epochs 100 --image_size 256 --batch_size 1 --num_res_blocks 9 --lr 0.0002 --lr_decay_rate 1 --lr_decay_intervall 200 --gaussian_noise_rate 0.05 --lambda_adversarial 1 --lambda_cycle 10 --lambda_identity 1 
     ```
 
 ---
