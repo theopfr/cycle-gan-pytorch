@@ -1,11 +1,11 @@
-# Cycle-GAN implemented in PyTorch
 
+#  🐴🔄🦓 Cycle-GAN implemented in PyTorch
 
 ### This repository contains an implementation of the Cylce-GAN architecture as proposed in the [original paper](https://arxiv.org/abs/1703.10593) along with instructions to train on an own dataset.
 
 ---
 
-## | setup:
+## 👨‍💻 setup:
 ### 1. install repository:
 ```
 git clone https://github.com/theopfr/cycle-gan-pytorch.git
@@ -20,7 +20,7 @@ pip install -r requirements.txt
 
 ---
 
-## | train:
+## 🏋️ train:
 
 ### 1. create dataset:
 - create a folder inside ``datasets/`` with a descriptive name to store your dataset
@@ -38,7 +38,7 @@ pip install -r requirements.txt
 
 ---
 
-## | train arguments and hyperparamters:
+## 🚩 train script flags/arguments:
 | argument | type | default | description | 
 | :------------- |:-------------:| ----- | ----- |
 | ``run_name`` | str | - | Name for the train run (a folder with this name will be created inside ``runs/`` to store train metrics, model checkpoints and generated images). | 
