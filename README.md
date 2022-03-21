@@ -1,11 +1,13 @@
 
-#  🐴🔄🦓 Cycle-GAN implemented in PyTorch
+<h1 style="text-align: center; font-size: 50px">🐴🔄🦓</h1>
+
+#  Cycle-GAN implemented in PyTorch
 
 ### This repository contains an implementation of the Cylce-GAN architecture as proposed in the [original paper](https://arxiv.org/abs/1703.10593) along with instructions to train on an own dataset.
 
 ---
 
-## 👨‍💻 setup:
+## ⬇️ setup:
 ### 1. install repository:
 ```
 git clone https://github.com/theopfr/cycle-gan-pytorch.git
