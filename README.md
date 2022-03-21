@@ -1,5 +1,7 @@
 
-<h1 style="text-align: center; font-size: 50px">🐴🔄🦓</h1>
+<p align="center" style="font-size: 50px">
+  🐴🔄🦓
+</p>
 
 #  Cycle-GAN implemented in PyTorch
 
