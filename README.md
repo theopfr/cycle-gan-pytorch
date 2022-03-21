@@ -1,9 +1,5 @@
 
-<p align="center" style="font-size: 50px">
-  🐴🔄🦓
-</p>
-
-#  Cycle-GAN implemented in PyTorch
+# 🐴🔄🦓 Cycle-GAN implemented in PyTorch
 
 ### This repository contains an implementation of the Cylce-GAN architecture as proposed in the [original paper](https://arxiv.org/abs/1703.10593) along with instructions to train on an own dataset.
 
