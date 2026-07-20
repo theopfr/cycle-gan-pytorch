@@ -168,19 +168,19 @@ if __name__ == "__main__":
     config = {
         "run_name": args["run_name"],
         "dataset_name": args["dataset_name"],
-        "save_image_intervall": 50 or args["save_image_intervall"],
-        "resume": False or (eval(args["resume"]) if args["resume"] != None else None),
-        "epochs": 200 or args["epochs"],
-        "image_size": 256 or args["image_size"],
-        "batch_size": 1 or args["batch_size"],
-        "num_res_blocks": 9 or args["num_res_blocks"],
-        "lr": 0.0002 or args["lr"],
-        "lr_decay_rate": 1 or args["lr_decay_rate"],
-        "lr_decay_intervall": 200 or args["lr_decay_intervall"],
-        "gaussian_noise_rate": 0.05 or args["gaussian_noise_rate"],
-        "lambda_adversarial": 1 or args["lambda_adversarial"],
-        "lambda_cycle": 10 or args["lambda_cycle"],
-        "lambda_identity": 1 or args["lambda_identity"]
+        "save_image_intervall": args["save_image_intervall"] or 50,
+        "resume": eval(args["resume"]) if args["resume"] is not None else False,
+        "epochs": args["epochs"] or 200,
+        "image_size": args["image_size"] or 256,
+        "batch_size": args["batch_size"] or 1,
+        "num_res_blocks": args["num_res_blocks"] or 9,
+        "lr": args["lr"] or 0.0002,
+        "lr_decay_rate": args["lr_decay_rate"] or 1,
+        "lr_decay_intervall": args["lr_decay_intervall"] or 200,
+        "gaussian_noise_rate": args["gaussian_noise_rate"] or 0.05,
+        "lambda_adversarial": args["lambda_adversarial"] or 1,
+        "lambda_cycle": args["lambda_cycle"] or 10,
+        "lambda_identity": args["lambda_identity"] or 1
     }
 
     train(config)
